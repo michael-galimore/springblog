@@ -9,22 +9,24 @@ import java.util.ArrayList;
 @Controller
 public class PostController {
     private PostRepository postsDao;
+    private UserRepository usersDao;
 
-    public PostController(PostRepository postsDao){
+    public PostController(PostRepository postsDao, UserRepository usersDao){
         this.postsDao = postsDao;
+        this.usersDao = usersDao;
     }
     @GetMapping("/posts")
     @ResponseBody
     public String viewPosts(Model model){
-        ArrayList<Post> allPosts = new ArrayList<>();
-        Post post2 = new Post(2, "test", "can you see me?");
-        Post post3 = new Post(2, "test", "can you see me?");
-        Post post4 = new Post(2, "test", "can you see me?");
-
-        allPosts.add(post2);
-        allPosts.add(post3);
-        allPosts.add(post4);
-        model.addAttribute("allpost",allPosts);
+//        ArrayList<Post> allPosts = new ArrayList<>();
+//        Post post2 = new Post(2, "test", "can you see me?");
+//        Post post3 = new Post(2, "test", "can you see me?");
+//        Post post4 = new Post(2, "test", "can you see me?");
+//
+//        allPosts.add(post2);
+//        allPosts.add(post3);
+//        allPosts.add(post4);
+        model.addAttribute("allpost", postsDao.findAll());
         return "posts/index";
     }
 
@@ -32,8 +34,8 @@ public class PostController {
     @GetMapping("/posts/{id}")
 //    @ResponseBody
     public String individualPost(@PathVariable long id, Model model){
-        Post post1 = new Post(1, "title", "Hi there");
-        model.addAttribute("singlePost", post1);
+
+        model.addAttribute("singlePost", postsDao.getById(id));
 
         return "/posts/show";
     }
@@ -49,6 +51,7 @@ public class PostController {
     @ResponseBody
     public String submitCreateForm(@RequestParam(name= "title") String title, @RequestParam (name="body") String body){
         Post newPost = new Post(title, body);
+        newPost.setUser(usersDao.getById(1L));
         postsDao.save(newPost);
 
         return "redirect:/posts";
