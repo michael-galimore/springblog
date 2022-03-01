@@ -8,6 +8,11 @@ import java.util.ArrayList;
 
 @Controller
 public class PostController {
+    private PostRepository postsDao;
+
+    public PostController(PostRepository postsDao){
+        this.postsDao = postsDao;
+    }
     @GetMapping("/posts")
     @ResponseBody
     public String viewPosts(Model model){
@@ -42,8 +47,33 @@ public class PostController {
 
     @PostMapping("/posts/create")
     @ResponseBody
-    public String submitCreateForm(){
-        return "create a new post";
+    public String submitCreateForm(@RequestParam(name= "title") String title, @RequestParam (name="body") String body){
+        Post newPost = new Post(title, body);
+        postsDao.save(newPost);
+
+        return "redirect:/posts";
+    }
+
+    @GetMapping("posts{id}/edit")
+    public String showEditForm(@PathVariable long id, Model model){
+        Post postToEdit = postsDao.getById(id);
+        model.addAttribute("postToEdit", postToEdit);
+        return "posts/edit";
+    }
+
+    @PostMapping("posts/{id}/edit")
+    public String submitEdit(@RequestParam(name ="title") String title, @RequestParam(name="body") String body, @PathVariable long id){
+        Post postToEdit = postsDao.getById(id);
+        postToEdit.setTitle(title);
+        postToEdit.setBody(body);
+        postsDao.save(postToEdit);
+        return "redirect:/posts";
+    }
+
+    @GetMapping("posts/{id}/delete")
+    public String delete (@PathVariable long id){
+        postsDao.deleteById(id);
+        return "redirect:/posts";
     }
 
 
