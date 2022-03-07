@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en xmlns:th=http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Guessing Game</title>
+</head>
+<body>
+<h1>Pick a number 1-6</h1>
+
+
+<form action="/roll-dice" method="get">
+<a href="/roll-dice/1">1</a>
+<a href="/roll-dice/2">2</a>
+<a href="/roll-dice/3">3</a>
+<a href="/roll-dice/4">4</a>
+<a href="/roll-dice/5">5</a>
+<a href="/roll-dice/6">6</a>
+
+    <h3 th:text="${result}"></h3>
+</form>
+
+<p >The correct number: <span th:text="${random}"></span></p>
+
+<p>The number you guessed is: <span th:text="${n}">></span></p>
+
+</body>
+</html>
