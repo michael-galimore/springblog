@@ -1,9 +1,11 @@
 package com.codeup.springblog.controllers;
 
+import com.codeup.springblog.models.User;
 import com.codeup.springblog.repositories.PostRepository;
 import com.codeup.springblog.repositories.UserRepository;
 import com.codeup.springblog.models.Post;
 import com.codeup.springblog.services.EmailService;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -60,9 +62,18 @@ public class PostController {
 
     @GetMapping("/posts{id}/edit")
     public String showEditForm(@PathVariable long id, Model model){
-        Post postToEdit = postsDao.getById(id);
-        model.addAttribute("postToEdit", postToEdit);
-        return "posts/edit";
+//        Post postToEdit = postsDao.getById(id);
+//        model.addAttribute("postToEdit", postToEdit);
+//        return "posts/edit";
+
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Post post = postsDao.getById(id);
+        if (user.getId() == post.getUser().getId()) {
+            model.addAttribute("post", post);
+            return "posts/edit";
+        } else {
+            return "posts/";
+        }
     }
 
     @PostMapping("posts/{id}/edit")
@@ -70,11 +81,14 @@ public class PostController {
 //        Post postToEdit = postsDao.getById(id);
 //        postToEdit.setTitle(title);
 //        postToEdit.setBody(body);
-        postsDao.save(postToEdit);
+//        postsDao.save(postToEdit);
+//        return "redirect:/posts";
+        postToEdit.setUser((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+         postsDao.save(postToEdit);
         return "redirect:/posts";
     }
 
-    @GetMapping("/posts/{id}/delete")
+    @PostMapping("/posts/{id}/delete")
     public String delete (@PathVariable long id){
         postsDao.deleteById(id);
         return "redirect:/posts";
