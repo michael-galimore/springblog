@@ -13,6 +13,7 @@
         <input type="text" class="form-control" id="title" name="title" th:value="${postToEdit.getTitle()}" th:fields="*{title}">
     </div>
     <input type="hidden" th:value="${postToEdit.getId()}" th:field="*{id}">
+    <input type="hidden" th:field="*{user.id}">
     <div class="form-group">
         <label for="body">Body</label>
         <textarea class="form-control" id="body" rows="3" name="body" th:text="${postToEdit.getBody()}" th:field="*{body}"></textarea>
